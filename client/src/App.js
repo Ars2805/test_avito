@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import ListPage from "./pages/ListPage/ListPage";
+import ItemPage from "./pages/ItemPage/ItemPage";
 import "./App.css";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/list" replace />} />
             <Route path="/list" element={<ListPage />} />
+            <Route path="/item/:id" element={<ItemPage />} /> 
             <Route path="*" element={<h2>404: Страница не найдена</h2>} />
           </Routes>
         </div>

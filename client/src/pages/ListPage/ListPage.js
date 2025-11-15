@@ -3,6 +3,7 @@ import { fetchAds } from "../../api/ads";
 import AdCard from "../../components/AdCard/AdCard";
 import Filters from "../../components/Filters/Filters";
 import "./ListPage.css";
+import { Link } from "react-router-dom";
 
 export default function ListPage() {
   const [allAds, setAllAds] = useState([]); 
@@ -63,7 +64,7 @@ export default function ListPage() {
       filtered = filtered.filter(ad => ad.price <= Number(filters.priceTo));
     }
 
-    
+
     if (filters.sortBy) {
       const [type, order] = filters.sortBy.split("_");
       filtered.sort((a, b) => {
@@ -149,7 +150,15 @@ export default function ListPage() {
         )}
 
         <div className="list-page__grid">
-          {ads.map(ad => <AdCard key={ad.id} ad={ad} />)}
+          {ads.map(ad => (
+            <Link 
+              to={`/item/${ad.id}`} 
+              key={ad.id} 
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <AdCard ad={ad} />
+            </Link>
+          ))}
         </div>
       </section>
 

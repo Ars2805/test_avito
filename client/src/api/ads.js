@@ -29,3 +29,16 @@ export async function fetchAds({ page = 1, limit = 10 } = {}) {
     };
   }
 }
+
+export async function fetchAdById(id) {
+  try {
+    const res = await fetch(`/api/v1/ads/${id}`);
+    if (!res.ok) throw new Error("Ошибка при загрузке объявления");
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Ошибка при fetchAdById:", error);
+    throw error;
+  }
+}
+
