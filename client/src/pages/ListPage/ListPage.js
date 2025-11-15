@@ -4,9 +4,11 @@ import AdCard from "../../components/AdCard/AdCard";
 import Filters from "../../components/Filters/Filters";
 import "./ListPage.css";
 import { Link } from "react-router-dom";
+import { AdsContext } from "../../context/AdsContext";
+import { useContext } from "react";
 
 export default function ListPage() {
-  const [allAds, setAllAds] = useState([]); 
+  const { allAds, setAllAds } = useContext(AdsContext);
   const [ads, setAds] = useState([]);      
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);

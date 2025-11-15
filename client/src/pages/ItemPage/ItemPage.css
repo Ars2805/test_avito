@@ -157,3 +157,46 @@
 .btn-revise:hover {
   background: #bfa448;
 }
+
+.item-page__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.item-page__nav-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-back {
+  background-color: #ddd;
+  color: #333;
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn-prev,
+.btn-next {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn-back:hover,
+.btn-prev:hover,
+.btn-next:hover {
+  opacity: 0.8;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

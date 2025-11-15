@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { fetchAdById } from "../../api/ads";
-import "./ItemPage.css";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchAdById, approveAd, rejectAd, requestChanges } from "../../api/ads";
 import ModalReject from "../../components/ModalReject/ModalReject";
-import { approveAd, rejectAd, requestChanges } from "../../api/ads";
-
+import { AdsContext } from "../../context/AdsContext";
+import "./ItemPage.css";
 
 export default function ItemPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { allAds } = useContext(AdsContext);
+
   const [ad, setAd] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,6 +51,20 @@ export default function ItemPage() {
   if (error) return <div className="item-page__error">{error}</div>;
   if (!ad) return <div className="item-page__empty">Объявление не найдено</div>;
 
+  const currentIndex =
+    allAds && allAds.length > 0
+      ? allAds.findIndex((item) => item.id === ad.id)
+      : -1;
+
+  const handleBack = () => navigate("/");
+  const handlePrev = () => {
+    if (currentIndex > 0) navigate(`/item/${allAds[currentIndex - 1].id}`);
+  };
+  const handleNext = () => {
+    if (currentIndex >= 0 && currentIndex < allAds.length - 1)
+      navigate(`/item/${allAds[currentIndex + 1].id}`);
+  };
+
   const handleApprove = async () => {
     try {
       await approveAd(ad.id);
@@ -65,7 +81,6 @@ export default function ItemPage() {
     try {
       const updatedAd = await requestChanges(ad.id, "Доработка", "");
       setAd({ ...updatedAd, status: "pending" });
-
       alert("Запрос на доработку отправлен!");
     } catch (err) {
       console.error(err);
@@ -120,10 +135,21 @@ export default function ItemPage() {
             <ul>
               {ad.moderationHistory.map((entry) => (
                 <li key={entry.id}>
-                  <p><strong>Модератор:</strong> {entry.moderatorName}</p>
-                  <p><strong>Дата:</strong> {new Date(entry.timestamp).toLocaleString()}</p>
-                  <p><strong>Решение:</strong> {translateAction(entry.action)}</p>
-                  {entry.comment && <p><strong>Комментарий:</strong> {entry.comment}</p>}
+                  <p>
+                    <strong>Модератор:</strong> {entry.moderatorName}
+                  </p>
+                  <p>
+                    <strong>Дата:</strong>{" "}
+                    {new Date(entry.timestamp).toLocaleString()}
+                  </p>
+                  <p>
+                    <strong>Решение:</strong> {translateAction(entry.action)}
+                  </p>
+                  {entry.comment && (
+                    <p>
+                      <strong>Комментарий:</strong> {entry.comment}
+                    </p>
+                  )}
                 </li>
               ))}
             </ul>
@@ -157,10 +183,19 @@ export default function ItemPage() {
       {ad.seller && (
         <section className="item-page__seller">
           <h2>Продавец</h2>
-          <p><strong>Имя:</strong> {ad.seller.name}</p>
-          <p><strong>Рейтинг:</strong> {ad.seller.rating}</p>
-          <p><strong>Количество объявлений:</strong> {ad.seller.totalAds}</p>
-          <p><strong>Дата регистрации:</strong> {new Date(ad.seller.registeredAt).toLocaleDateString()}</p>
+          <p>
+            <strong>Имя:</strong> {ad.seller.name}
+          </p>
+          <p>
+            <strong>Рейтинг:</strong> {ad.seller.rating}
+          </p>
+          <p>
+            <strong>Количество объявлений:</strong> {ad.seller.totalAds}
+          </p>
+          <p>
+            <strong>Дата регистрации:</strong>{" "}
+            {new Date(ad.seller.registeredAt).toLocaleDateString()}
+          </p>
         </section>
       )}
 
@@ -169,7 +204,10 @@ export default function ItemPage() {
           <button className="btn btn-approve" onClick={handleApprove}>
             Одобрить
           </button>
-          <button className="btn btn-reject" onClick={() => setRejectModalOpen(true)}>
+          <button
+            className="btn btn-reject"
+            onClick={() => setRejectModalOpen(true)}
+          >
             Отклонить
           </button>
           <button className="btn btn-revise" onClick={handleRequestChanges}>
@@ -185,6 +223,27 @@ export default function ItemPage() {
         />
       )}
 
+      <section className="item-page__navigation">
+        <button className="btn btn-back" onClick={handleBack}>
+          ← Назад к списку
+        </button>
+        <div className="item-page__nav-buttons">
+          <button
+            className="btn btn-prev"
+            onClick={handlePrev}
+            disabled={currentIndex <= 0}
+          >
+            Предыдущее
+          </button>
+          <button
+            className="btn btn-next"
+            onClick={handleNext}
+            disabled={currentIndex === -1 || currentIndex >= allAds.length - 1}
+          >
+            Следующее
+          </button>
+        </div>
+      </section>
     </main>
   );
 }
