@@ -65,10 +65,14 @@ export default function Filters({ filters, setFilters, onReset }) {
           onChange={(e) => handleCategoryChange(e.target.value)}
         >
           <option value="">Все</option>
-          <option value="Авто">Авто</option>
+          <option value="Детское">Детское</option>
+          <option value="Животные">Животные</option>
+          <option value="Мода">Мода</option>
           <option value="Недвижимость">Недвижимость</option>
+          <option value="Работа">Работа</option>
+          <option value="Транспорт">Транспорт</option>
+          <option value="Услуги">Услуги</option>
           <option value="Электроника">Электроника</option>
-          <option value="Разное">Разное</option>
         </select>
       </div>
 

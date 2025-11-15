@@ -81,7 +81,8 @@
   white-space: nowrap;
 }
 
-.ad-card__status_pending {
+.ad-card__status_pending,
+.ad-card__status_draft {
   background-color: #fff7e6;
   color: #b87b00;
 }

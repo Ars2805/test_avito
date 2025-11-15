@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchAdById } from "../../api/ads";
 import "./ItemPage.css";
+import ModalReject from "../../components/ModalReject/ModalReject";
+import { approveAd, rejectAd, requestChanges } from "../../api/ads";
+
 
 export default function ItemPage() {
   const { id } = useParams();
@@ -9,6 +12,7 @@ export default function ItemPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
 
   const translateAction = (action) => {
     switch (action) {
@@ -16,8 +20,9 @@ export default function ItemPage() {
         return "Одобрено";
       case "rejected":
         return "Отклонено";
-      case "revision":
-        return "Доработка";
+      case "pending":
+      case "requestChanges":
+        return "На модерации";
       default:
         return action;
     }
@@ -43,6 +48,43 @@ export default function ItemPage() {
   if (loading) return <div className="item-page__loading">Загрузка...</div>;
   if (error) return <div className="item-page__error">{error}</div>;
   if (!ad) return <div className="item-page__empty">Объявление не найдено</div>;
+
+  const handleApprove = async () => {
+    try {
+      await approveAd(ad.id);
+      const updated = await fetchAdById(ad.id);
+      setAd(updated);
+      alert("Объявление одобрено!");
+    } catch (err) {
+      console.error(err);
+      alert("Ошибка при одобрении объявления");
+    }
+  };
+
+  const handleRequestChanges = async () => {
+    try {
+      const updatedAd = await requestChanges(ad.id, "Доработка", "");
+      setAd({ ...updatedAd, status: "pending" });
+
+      alert("Запрос на доработку отправлен!");
+    } catch (err) {
+      console.error(err);
+      alert("Ошибка при запросе доработки");
+    }
+  };
+
+  const handleReject = async (reason, comment) => {
+    try {
+      await rejectAd(ad.id, reason, comment);
+      const updated = await fetchAdById(ad.id);
+      setAd(updated);
+      setRejectModalOpen(false);
+      alert("Объявление отклонено!");
+    } catch (err) {
+      console.error(err);
+      alert("Ошибка при отклонении объявления");
+    }
+  };
 
   return (
     <main className="item-page">
@@ -121,6 +163,28 @@ export default function ItemPage() {
           <p><strong>Дата регистрации:</strong> {new Date(ad.seller.registeredAt).toLocaleDateString()}</p>
         </section>
       )}
+
+      <section className="moderator-actions">
+        <div className="moderator-actions__buttons">
+          <button className="btn btn-approve" onClick={handleApprove}>
+            Одобрить
+          </button>
+          <button className="btn btn-reject" onClick={() => setRejectModalOpen(true)}>
+            Отклонить
+          </button>
+          <button className="btn btn-revise" onClick={handleRequestChanges}>
+            Вернуть на доработку
+          </button>
+        </div>
+      </section>
+
+      {rejectModalOpen && (
+        <ModalReject
+          onClose={() => setRejectModalOpen(false)}
+          onSubmit={(reason, comment) => handleReject(reason, comment)}
+        />
+      )}
+
     </main>
   );
 }

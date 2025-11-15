@@ -38,7 +38,7 @@ function AdCard({ ad }) {
 
         <div className="ad-card__badges">
           <span className={`ad-card__status ad-card__status_${status}`}>
-            {status === "pending" && "На модерации"}
+            {(status === "pending" || status === "draft") && "На модерации"}
             {status === "approved" && "Одобрено"}
             {status === "rejected" && "Отклонено"}
           </span>
