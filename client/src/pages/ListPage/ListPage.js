@@ -19,7 +19,8 @@ export default function ListPage() {
     status: [],
     category: "",
     priceFrom: "",
-    priceTo: ""
+    priceTo: "",
+    sortBy: ""
   });
 
   useEffect(() => {
@@ -62,6 +63,35 @@ export default function ListPage() {
       filtered = filtered.filter(ad => ad.price <= Number(filters.priceTo));
     }
 
+    
+    if (filters.sortBy) {
+      const [type, order] = filters.sortBy.split("_");
+      filtered.sort((a, b) => {
+        let valA, valB;
+
+        switch (type) {
+          case "price":
+            valA = a.price;
+            valB = b.price;
+            break;
+          case "date":
+            valA = new Date(a.createdAt).getTime();
+            valB = new Date(b.createdAt).getTime();
+            break;
+          case "priority":
+            const mapPriority = { urgent: 2, normal: 1 };
+            valA = mapPriority[a.priority] || 0;
+            valB = mapPriority[b.priority] || 0;
+            break;
+          default:
+            return 0;
+        }
+
+        if (order === "asc") return valA - valB;
+        return valB - valA;
+      });
+    }
+
     const totalItems = filtered.length;
     const totalPages = Math.ceil(totalItems / limit);
 
@@ -85,7 +115,8 @@ export default function ListPage() {
       status: [],
       category: "",
       priceFrom: "",
-      priceTo: ""
+      priceTo: "",
+      sortBy: ""
     });
     setCurrentPage(1);
   };

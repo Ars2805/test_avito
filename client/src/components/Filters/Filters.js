@@ -22,6 +22,10 @@ export default function Filters({ filters, setFilters, onReset }) {
     setFilters({ ...filters, query: value });
   };
 
+  const handleSort = (type, order) => {
+    setFilters({ ...filters, sortBy: `${type}_${order}` });
+  };
+
   return (
     <div className="filters">
       <div className="filters__group">
@@ -84,6 +88,68 @@ export default function Filters({ filters, setFilters, onReset }) {
           value={filters.priceTo}
           onChange={(e) => handlePriceChange("priceTo", e.target.value)}
         />
+      </div>
+
+      <div className="filters__group filters__sort">
+        <span className="filters__label">Сортировка</span>
+        <div className="filters__sort-buttons">
+
+          <div className="filters__sort-item">
+            <span>Цена</span>
+            <div className="filters__sort-arrows">
+              <button
+                className={filters.sortBy === "price_asc" ? "active" : ""}
+                onClick={() => handleSort("price", "asc")}
+              >
+                ↑
+              </button>
+              <button
+                className={filters.sortBy === "price_desc" ? "active" : ""}
+                onClick={() => handleSort("price", "desc")}
+              >
+                ↓
+              </button>
+            </div>
+          </div>
+
+
+          <div className="filters__sort-item">
+            <span>Дата</span>
+            <div className="filters__sort-arrows">
+              <button
+                className={filters.sortBy === "date_asc" ? "active" : ""}
+                onClick={() => handleSort("date", "asc")}
+              >
+                ↑
+              </button>
+              <button
+                className={filters.sortBy === "date_desc" ? "active" : ""}
+                onClick={() => handleSort("date", "desc")}
+              >
+                ↓
+              </button>
+            </div>
+          </div>
+
+
+          <div className="filters__sort-item">
+            <span>Приоритет</span>
+            <div className="filters__sort-arrows">
+              <button
+                className={filters.sortBy === "priority_asc" ? "active" : ""}
+                onClick={() => handleSort("priority", "asc")}
+              >
+                ↑
+              </button>
+              <button
+                className={filters.sortBy === "priority_desc" ? "active" : ""}
+                onClick={() => handleSort("priority", "desc")}
+              >
+                ↓
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <button className="filters__reset" onClick={onReset}>

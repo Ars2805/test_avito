@@ -72,3 +72,51 @@
 .filters__reset:hover {
   background: #d0d0d0;
 }
+
+.filters__sort {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filters__sort-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.filters__sort-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filters__sort-arrows {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  gap: 2px;
+}
+
+.filters__sort-arrows button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.filters__sort-arrows button:hover {
+  background: #f0f0f0;
+}
+
+.filters__sort-arrows button.active {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
