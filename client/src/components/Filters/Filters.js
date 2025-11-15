@@ -2,10 +2,28 @@ import React from "react";
 import "./Filters.css";
 
 export default function Filters({ filters, setFilters, onReset }) {
+
   const handleStatusChange = (value) => {
-    const newStatuses = filters.status.includes(value)
-      ? filters.status.filter((s) => s !== value)
-      : [...filters.status, value];
+    let newStatuses = [...filters.status];
+
+    if (value === "pending") {
+      const modStatuses = ["pending", "draft"];
+      const allIncluded = modStatuses.every(s => newStatuses.includes(s));
+
+      if (allIncluded) {
+        newStatuses = newStatuses.filter(s => !modStatuses.includes(s));
+      } else {
+        modStatuses.forEach(s => {
+          if (!newStatuses.includes(s)) newStatuses.push(s);
+        });
+      }
+    } else {
+      if (newStatuses.includes(value)) {
+        newStatuses = newStatuses.filter(s => s !== value);
+      } else {
+        newStatuses.push(value);
+      }
+    }
 
     setFilters({ ...filters, status: newStatuses });
   };
