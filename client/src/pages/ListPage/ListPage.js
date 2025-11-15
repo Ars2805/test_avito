@@ -1,34 +1,94 @@
 import React, { useEffect, useState } from "react";
 import { fetchAds } from "../../api/ads";
 import AdCard from "../../components/AdCard/AdCard";
+import Filters from "../../components/Filters/Filters";
 import "./ListPage.css";
 
 export default function ListPage() {
-  const [ads, setAds] = useState([]);
+  const [allAds, setAllAds] = useState([]); 
+  const [ads, setAds] = useState([]);      
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10; 
+
+  const [filters, setFilters] = useState({
+    query: "",
+    status: [],
+    category: "",
+    priceFrom: "",
+    priceTo: ""
+  });
 
   useEffect(() => {
-    loadAds(currentPage);
-  }, [currentPage]);
-
-  async function loadAds(page) {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchAds({ page, limit: 10 });
-      setAds(data.items);
-      setPagination(data.pagination);
-    } catch (err) {
-      console.error(err);
-      setError(err.message || "Ошибка при загрузке объявлений");
-    } finally {
-      setLoading(false);
+    async function loadAllAds() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchAds({ page: 1, limit: 10000 });
+        setAllAds(data.items);
+      } catch (err) {
+        console.error(err);
+        setError(err.message || "Ошибка при загрузке объявлений");
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+    loadAllAds();
+  }, []);
+
+  useEffect(() => {
+    let filtered = [...allAds];
+
+    if (filters.query) {
+      const q = filters.query.toLowerCase();
+      filtered = filtered.filter(ad => ad.title.toLowerCase().includes(q));
+    }
+
+    if (filters.status.length > 0) {
+      filtered = filtered.filter(ad => filters.status.includes(ad.status));
+    }
+
+    if (filters.category) {
+      filtered = filtered.filter(ad => ad.category === filters.category);
+    }
+
+    if (filters.priceFrom) {
+      filtered = filtered.filter(ad => ad.price >= Number(filters.priceFrom));
+    }
+    if (filters.priceTo) {
+      filtered = filtered.filter(ad => ad.price <= Number(filters.priceTo));
+    }
+
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const page = currentPage > totalPages ? totalPages || 1 : currentPage;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedAds = filtered.slice(startIndex, endIndex);
+
+    setAds(paginatedAds);
+    setPagination({
+      totalItems,
+      totalPages,
+      currentPage: page
+    });
+  }, [allAds, filters, currentPage]);
+
+  const resetFilters = () => {
+    setFilters({
+      query: "",
+      status: [],
+      category: "",
+      priceFrom: "",
+      priceTo: ""
+    });
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (page) => {
     if (pagination && page >= 1 && page <= pagination.totalPages) {
@@ -47,6 +107,8 @@ export default function ListPage() {
         )}
       </header>
 
+      <Filters filters={filters} setFilters={setFilters} onReset={resetFilters} />
+
       <section className="list-page__content">
         {loading && <div className="list-page__loading">Загрузка...</div>}
         {error && <div className="list-page__error">{error}</div>}
@@ -56,9 +118,7 @@ export default function ListPage() {
         )}
 
         <div className="list-page__grid">
-          {ads.map((ad) => (
-            <AdCard key={ad.id} ad={ad} />
-          ))}
+          {ads.map(ad => <AdCard key={ad.id} ad={ad} />)}
         </div>
       </section>
 
@@ -66,20 +126,20 @@ export default function ListPage() {
         <footer className="list-page__pagination">
           <button
             className="list-page__page-btn"
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={pagination.currentPage === 1}
+            onClick={() => handlePageChange(pagination.currentPage - 1)}
           >
             ← Предыдущая
           </button>
 
           <span className="list-page__page-info">
-            {currentPage} / {pagination.totalPages}
+            {pagination.currentPage} / {pagination.totalPages}
           </span>
 
           <button
             className="list-page__page-btn"
-            disabled={currentPage === pagination.totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={pagination.currentPage === pagination.totalPages}
+            onClick={() => handlePageChange(pagination.currentPage + 1)}
           >
             Следующая →
           </button>

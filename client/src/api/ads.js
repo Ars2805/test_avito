@@ -15,8 +15,10 @@ export async function fetchAds({ page = 1, limit = 10 } = {}) {
 
     const data = await res.json();
 
+    const items = data.ads || [];
+
     return {
-      items: data.ads || [],
+      items,
       pagination: data.pagination || null
     };
   } catch (error) {
