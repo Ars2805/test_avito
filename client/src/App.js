@@ -4,6 +4,7 @@ import ListPage from "./pages/ListPage/ListPage";
 import ItemPage from "./pages/ItemPage/ItemPage";
 import "./App.css";
 import { AdsProvider } from "./context/AdsContext";
+import StatsPage from "./pages/StatsPage/StatsPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
             <h1>Avito Модерация</h1>
             <nav className="App__nav">
               <Link to="/list" className="App__nav-link">Список объявлений</Link>
+              <Link to="/stats" className="App__nav-link">Статистика</Link> 
             </nav>
           </header>
 
@@ -22,6 +24,7 @@ function App() {
               <Route path="/" element={<Navigate to="/list" replace />} />
               <Route path="/list" element={<ListPage />} />
               <Route path="/item/:id" element={<ItemPage />} /> 
+              <Route path="/stats" element={<StatsPage />} />
               <Route path="*" element={<h2>404: Страница не найдена</h2>} />
             </Routes>
           </div>

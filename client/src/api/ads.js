@@ -42,7 +42,6 @@ export async function fetchAdById(id) {
   }
 }
 
-/* === Одобрить объявление === */
 export async function approveAd(id) {
   try {
     const res = await fetch(`${BASE_URL}/ads/${id}/approve`, { method: "POST" });
@@ -54,7 +53,6 @@ export async function approveAd(id) {
   }
 }
 
-/* === Отклонить объявление === */
 export async function rejectAd(id, reason, comment = "") {
   try {
     const res = await fetch(`${BASE_URL}/ads/${id}/reject`, {
@@ -70,7 +68,6 @@ export async function rejectAd(id, reason, comment = "") {
   }
 }
 
-/* === Запросить доработку объявления === */
 export async function requestChanges(id, reason, comment = "") {
   try {
     const res = await fetch(`${BASE_URL}/ads/${id}/request-changes`, {
