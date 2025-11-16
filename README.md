@@ -67,14 +67,14 @@
 
 ## Скриншоты
 
-![](screens/1.png)
-![](screens/2.png)
-![](screens/3.png)
-![](screens/4.png)
-![](screens/5.png)
-![](screens/6.png)
-![](screens/7.png)
-![](screens/8.png)
+![](client/screens/1.png)
+![](client/screens/2.png)
+![](client/screens/3.png)
+![](client/screens/4.png)
+![](client/screens/5.png)
+![](client/screens/6.png)
+![](client/screens/7.png)
+![](client/screens/8.png)
 
 ## Автор
 
