@@ -4,11 +4,13 @@ import { fetchAdById, approveAd, rejectAd, requestChanges } from "../../api/ads"
 import ModalReject from "../../components/ModalReject/ModalReject";
 import { AdsContext } from "../../context/AdsContext";
 import "./ItemPage.css";
+import { fetchAds } from "../../api/ads";
 
 export default function ItemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { allAds } = useContext(AdsContext);
+  const { allAds, setAllAds } = useContext(AdsContext);
+
 
   const [ad, setAd] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +31,22 @@ export default function ItemPage() {
         return action;
     }
   };
+
+  useEffect(() => {
+    async function loadAll() {
+      if (!allAds || allAds.length === 0) {
+        try {
+          const data = await fetchAds({ page: 1, limit: 10000 });
+          setAllAds(data.items);
+        } catch (err) {
+          console.error("Ошибка загрузки списка объявлений:", err);
+        }
+      }
+    }
+
+    loadAll();
+  }, []);
+
 
   useEffect(() => {
     async function loadAd() {
